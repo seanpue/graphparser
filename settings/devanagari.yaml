@@ -164,6 +164,8 @@ rules:
   '_': ''
 onmatch:
   -
+    <wb> <consonant> + <consonant>: \N{DEVANAGARI SIGN VIRAMA}
+  -
     <z_consonant> + <z_consonant>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <m> + <h_char>: \N{DEVANAGARI SIGN VIRAMA}
@@ -216,6 +218,8 @@ onmatch:
     <k> + <k_group>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <ch> + <ch_group>: \N{DEVANAGARI SIGN VIRAMA}
+  -
+    <y> + <y>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <wb> <consonant> <long_vowel> <consonant> + <consonant> <long_vowel>: ''
   -

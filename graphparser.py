@@ -1,4 +1,4 @@
-from oldparser import Parser # for now, just load yaml rules via Parser
+from myparser import Parser # for now, just load yaml rules via Parser
 import networkx as nx
 from collections import namedtuple
 
