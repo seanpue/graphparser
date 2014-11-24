@@ -159,7 +159,7 @@ class Parser:
     error_on_last = False
     last_string = ''
     error_string = ''
-    onmatch_rules=False
+
     def generate_token_match_string(self):
         tokens = self.tokens.keys()
         sorted_tokens = sorted(tokens, key=len, reverse=True)

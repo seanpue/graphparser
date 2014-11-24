@@ -1,4 +1,4 @@
-from oldparser import Parser # for now, just load yaml rules via Parser
+from myparser import Parser # for now, just load yaml rules via Parser
 import networkx as nx
 from collections import namedtuple
 
@@ -20,8 +20,8 @@ class GraphParser:
         #print DG
         self.DG = DG
         self.blank = blank # what token is assumed at before and after tokens
-        self.onmatch_rules=self.old_parser.onmatch_rules
-        
+        self.onmatch_rules = self.old_parser.onmatch_rules
+    
     def rules_to_tuple(self,rules):
         new_rules = []
         for r in rules:
@@ -219,6 +219,7 @@ class GraphParser:
 #                            pdb.set_trace()  
                 mtkns = [' ']+tkns+[' ']
                 mt_i = t_i+1
+
                 for mr in self.onmatch_rules:
 #                        pdb.set_trace()
                     (classes,p)=mr
@@ -240,8 +241,12 @@ class GraphParser:
                         continue
 #                             print 'found match rule!!!'
 #                                pdb.set_trace()                                
+
+#                    print 'adding'
                     output += p
                     break # break out of for loop
+                                
+            
             output+=m.production
             t_i += len(m.tokens)
         return ParserOutput(output=output,matches=matches)
@@ -367,22 +372,3 @@ if __name__ == '__main__':
     nagarip=GraphParser('settings/devanagari.yaml')
     print nagarip.parse(" kyaa hu)aa hai bhaa))ii")
     
-    #r=ParserRule(production='s_z', prev_class=None, prev_tokens=('b','c'), tokens=('z'), next_tokens=None, next_class=None)
-    #ts = ['b','c','z']
-    #assert gp.match_rule(r,ts,2,1)
-#    tkns =  ['b', 'c', 's', 'c', 'c','b']
-    #print gp.DG.node[0]
-    #print gp.match_first_at(ts,0)
-
-    #print pp.match_first_at(tkns,1)
-    #print pp.rules
-#    print pp.parse(' ko))ii')
-    #tkns=[' ', 'm', 'uu', '-e', ' ', 'aa', 't', 'i', 'sh', '-', 'd', 'ii', 'd', 'a', 'h', ' ', 'h', 'ai', ' ', ';h', 'a', 'l', 'q', 'a', 'h', ' ', 'm', 'i', 'r', 'ii', ' ', 'z', 'a', 'n', 'j', 'ii', 'r', ' ', 'k', 'aa']
-    
-   # print sp.match_all_at(tkns,2)
-    #print '---'
-    #print lp.match_all_at(tkns,2)
-    #parse = gp.parse(' par')# pyuu')#
-   # siyaahii jaise gir jaave dam-e ta;hriir kaa;ga;z par')
-    #print parse.output
-    #gp = GraphParser('settings/short.yaml')
