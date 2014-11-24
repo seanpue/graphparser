@@ -241,7 +241,7 @@ class GraphParser:
                         continue
 #                             print 'found match rule!!!'
 #                                pdb.set_trace()                                
-                    print 'adding'
+#                    print 'adding'
                     output += p
                     break # break out of for loop
                                 
