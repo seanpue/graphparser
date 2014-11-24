@@ -1,6 +1,6 @@
 import re
 
-
+import unicodedata
 def load_yaml(filename):
     """
     Reads any yaml file and returns it as object.
@@ -111,6 +111,50 @@ def rules_from_yaml_data(rules_raw):
         rules.append(rule)
 
     return rules
+def unescape_unicode_charnames(s):
+    """
+    Takes \N{charname} in production rule and turns to Unicode string.
+    """
+
+    def get_unicode_char(matchobj):
+#            """
+#            Returns Unicode character of \N{character name}
+#            """
+#           if debug: print "Trying "+matchobj+"in get_unicode_char"
+        s = matchobj.group(0)
+        m = re.match(r'\\N{(.+)}',s)
+        char = unicodedata.lookup(m.group(1))
+        return char
+
+    return re.sub(r'\\N{.+?}',get_unicode_char,s)
+
+def onmatch_rules_from_yaml_data(rules_raw):
+    ''' Some quick code to generate the onmatch rules. It only relies on classes '''
+    ''' returns a tuple ( (left_classes,right_classes) , prod)
+        rules are classes '''
+    onmatch_rules = [] # clean list of rule
+#    print "rules_r is"+str(rules_raw)
+    debug=True
+
+    match_rules = []
+    for key in rules_raw:
+        assert len(key)==1
+        rule = key.keys()[0]
+        prod_orig = key[rule]
+        prod = unescape_unicode_charnames(prod_orig)
+
+
+#        print rule
+        m= re.match('([^+]+)\+([^+]+)$',rule)
+        assert m
+    
+        l = m.group(1) #left
+        r =m.group(2)  #right
+
+        cl_l=re.findall('(?<=<)[^<]+(?=>)',l)
+        cl_r=re.findall('(?<=<)[^<]+(?=>)',r)
+        onmatch_rules.append(( (cl_l, cl_r) , prod ))
+    return(onmatch_rules)
 
 debug=False
 class Parser:
@@ -129,8 +173,10 @@ class Parser:
         rules.sort(cmp=compare_rules)
         self.tokens = data['tokens']
         self.token_match_re = self.generate_token_match_re()
-
-
+        if 'onmatch' in data:
+            self.onmatch_rules = onmatch_rules_from_yaml_data(data['onmatch'])
+        else:
+            self.onmatch_rules = None
     def generate_token_match_string(self):
         tokens = self.tokens.keys()
         sorted_tokens = sorted(tokens, key=len, reverse=True)

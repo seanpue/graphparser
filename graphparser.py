@@ -20,7 +20,8 @@ class GraphParser:
         #print DG
         self.DG = DG
         self.blank = blank # what token is assumed at before and after tokens
-    
+        self.onmatch_rules=self.old_parser.onmatch_rules
+        
     def rules_to_tuple(self,rules):
         new_rules = []
         for r in rules:
@@ -195,7 +196,7 @@ class GraphParser:
     # no matches
         
         return descend_node(0,0)        
-    
+
     def parse(self,string):
         t_i = 0
         tkns = self.tokenize(string)
@@ -214,6 +215,33 @@ class GraphParser:
                 print "error in string",string
             assert m != None # for now, croak on error
             matches.append(m)
+            if self.onmatch_rules:
+#                            pdb.set_trace()  
+                mtkns = [' ']+tkns+[' ']
+                mt_i = t_i+1
+                for mr in self.onmatch_rules:
+#                        pdb.set_trace()
+                    (classes,p)=mr
+                    (l_c,r_c)=classes
+                    # try left match
+                    if mt_i < len(l_c) or mt_i+len(r_c)>len(mtkns):
+                        continue
+#ln                                pdb.set_trace()
+        
+#                                my_range = range(t_i-len(l_c),t_i+(r_c))
+        
+                    classes_to_test_l = [self.tokens[c] for c in mtkns[mt_i-len(l_c):mt_i]]
+        
+                    classes_to_test_r = [self.tokens[c] for c in mtkns[mt_i:mt_i+len(r_c)]]
+        
+                    if not all(l_c[i] in classes_to_test_l[i] for i in range(len(l_c))):
+                        continue
+                    if not all(r_c[i] in classes_to_test_r[i] for i in range(len(r_c))):
+                        continue
+#                             print 'found match rule!!!'
+#                                pdb.set_trace()                                
+                    output += p
+                    break # break out of for loop
             output+=m.production
             t_i += len(m.tokens)
         return ParserOutput(output=output,matches=matches)
@@ -336,23 +364,16 @@ def draw_parser_graph(g):
             labels=labels)
 
 if __name__ == '__main__':
-    gp = GraphParser('settings/short.yaml')
+    nagarip=GraphParser('settings/devanagari.yaml')
+    print nagarip.parse(" kyaa hu)aa hai bhaa))ii")
+    
     #r=ParserRule(production='s_z', prev_class=None, prev_tokens=('b','c'), tokens=('z'), next_tokens=None, next_class=None)
     #ts = ['b','c','z']
     #assert gp.match_rule(r,ts,2,1)
 #    tkns =  ['b', 'c', 's', 'c', 'c','b']
     #print gp.DG.node[0]
     #print gp.match_first_at(ts,0)
-    sp = GraphParser('settings/short.yaml')
-    lp = GraphParser('settings/long.yaml')
 
-    pp = GraphParser('settings/urdu-meter.yaml')
-    #print pp.rules
-    print pp.parse('  kaa')
-    s = ' muu-e aatish-diidah hai ;halqah mirii zanjiir kaa'
-   # print pp.parse(s).output
-    tkns = pp.tokenize(' ko))ii')
-    print tkns
     #print pp.match_first_at(tkns,1)
     #print pp.rules
 #    print pp.parse(' ko))ii')
