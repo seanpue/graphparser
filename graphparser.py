@@ -88,12 +88,42 @@ class GraphParser:
             #print 'added rule',rule
         return DG
 
-    def match_rule(self,rule, tokens, token_i, level):
+    def match_rule(self,rule, tkns, t_i, level):
 #        print "trying to match rule ",rule
         parser_tokens = self.tokens
         # level shows how far we have moved forward from token_i
 #        print "trying rule ",rule
 #        pdb.set_trace()
+        r_tkns=[]
+        if rule.prev_tokens:
+            i_start =t_i - len(rule.prev_tokens)
+            r_tkns+=rule.prev_tokens # could save this as match offset
+        else:
+            i_start = t_i
+        r_tkns +=rule.tokens
+        if rule.next_tokens:
+            r_tkns += rule.next_tokens
+        if not all(r_tkns[i] == tkns[i_start+i] for i in range(len(r_tkns)) ):
+            return False
+        if rule.prev_classes:
+            prev_classes = rule.prev_classes[::-1] # reverse these
+            if i_start - len(prev_classes) < -1: 
+                return False
+            to_match = ([' ']+tkns)[i_start+1-len(prev_classes):i_start+1][::-1]
+            if not all(prev_classes[i] in self.tokens[to_match[i]] for i in range(len(prev_classes))): 
+                return False
+        if rule.next_classes:
+            next_classes = rule.next_classes
+            if i_start + len(r_tkns)+len(next_classes) > len(tkns)+1:
+                return False
+            to_match = tkns[i_start+len(r_tkns):i_start+len(r_tkns)+len(next_classes)] + [' ']
+            if not all(next_classes[i] in self.tokens[to_match[i]] for i in range(len(next_classes))): 
+                return False
+        return True
+
+
+
+        ''''
         (num_prev_tokens, num_next_tokens) = (0,0)
         if rule.prev_tokens:
             num_prev_tokens = len(rule.prev_tokens)
@@ -115,6 +145,9 @@ class GraphParser:
                 prev_token = self.blank
             else:
                 prev_token = tokens[start_i]
+            if len(rule.prev_classes)>1:
+                print rule
+                print tokens
             assert len(rule.prev_classes)<2
             if not rule.prev_classes[0] in parser_tokens[prev_token]:
                 return False
@@ -143,7 +176,7 @@ class GraphParser:
     #        if start_i + num_next_tokens == len(tokens):  need to deal with this one, but can in next
       #  print "passed next_class"
         return True
-
+        '''
     def match_first_at(self,tokens, token_i):
         #print "trying tokens ",tokens," at token_i",token_i
 
