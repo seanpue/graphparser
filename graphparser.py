@@ -26,11 +26,11 @@ class GraphParser:
         new_rules = []
         for r in rules:
             pr = ParserRule(production = r['production'], 
-                            prev_class = r.get('prev_class'),
+                            prev_class = r.get('prev_classes'),#change here
                             prev_tokens = r.get('prev_tokens'),
                             tokens = r['tokens'],
                             next_tokens = r.get('next_tokens'),
-                            next_class = r.get('next_class'))
+                            next_class = r.get('next_classes')) # change here
             new_rules.append(pr)
         return tuple(new_rules)
         
@@ -369,6 +369,8 @@ def draw_parser_graph(g):
             labels=labels)
 
 if __name__ == '__main__':
+    import pdb
+    pdb.set_trace()
     nagarip=GraphParser('settings/devanagari.yaml')
     print nagarip.parse(" kyaa hu)aa hai bhaa))ii")
     
