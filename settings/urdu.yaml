@@ -23,6 +23,7 @@ rules:
   '- o -': \N{ARABIC LETTER WAW}
   "----": \N{ARABIC FULL STOP}\N{ARABIC FULL STOP}
   -e <wb>: \N{ARABIC KASRA}
+  -e: izaafat
   <nc_long_vowel> -e <wb>: \N{ARABIC LETTER YEH BARREE}
   .r: \N{ARABIC LETTER REH}
   .s: \N{ARABIC LETTER SAD}

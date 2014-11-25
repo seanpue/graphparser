@@ -1,8 +1,9 @@
+# the prev and next classes turned into lists. Had to correct for that
 from myparser import Parser # for now, just load yaml rules via Parser
 import networkx as nx
 from collections import namedtuple
 
-ParserRule = namedtuple('ParserRule', ['production','prev_class','prev_tokens','tokens','next_tokens','next_class'])
+ParserRule = namedtuple('ParserRule', ['production','prev_classes','prev_tokens','tokens','next_tokens','next_classes'])
 
 ParserOutput = namedtuple('ParserOutput', ['matches','output']) 
 
@@ -26,11 +27,11 @@ class GraphParser:
         new_rules = []
         for r in rules:
             pr = ParserRule(production = r['production'], 
-                            prev_class = r.get('prev_classes'),#change here
+                            prev_classes = r.get('prev_classes'),#change here
                             prev_tokens = r.get('prev_tokens'),
                             tokens = r['tokens'],
                             next_tokens = r.get('next_tokens'),
-                            next_class = r.get('next_classes')) # change here
+                            next_classes = r.get('next_classes')) # change here
             new_rules.append(pr)
         return tuple(new_rules)
         
@@ -50,11 +51,11 @@ class GraphParser:
 
         def weight_of_rule(r): # and here namedtuples get clunky? 
             weight=5 # start at five and subtract.
-            if r.prev_class:
+            if r.prev_classes:
                 weight+=-1
             if r.prev_tokens:
                 weight+=-1
-            if r.next_class:
+            if r.next_classes:
                 weight+=-1
             if r.next_tokens:
                 weight+=-1
@@ -88,10 +89,11 @@ class GraphParser:
         return DG
 
     def match_rule(self,rule, tokens, token_i, level):
-        #print "trying to match rule ",rule
+#        print "trying to match rule ",rule
         parser_tokens = self.tokens
         # level shows how far we have moved forward from token_i
-        #print "trying rule ",rule
+#        print "trying rule ",rule
+#        pdb.set_trace()
         (num_prev_tokens, num_next_tokens) = (0,0)
         if rule.prev_tokens:
             num_prev_tokens = len(rule.prev_tokens)
@@ -103,8 +105,8 @@ class GraphParser:
                 if not tokens[start_i+i]==rule.prev_tokens[i]:
                     return False
 #        print "  passed prev tokens"
-        if rule.prev_class:
-            #print 'in prev_class'
+        if rule.prev_classes:
+#            print 'in prev_class'
             start_i = token_i - num_prev_tokens-1
             prev_token = ''
             if start_i < -1:
@@ -113,28 +115,30 @@ class GraphParser:
                 prev_token = self.blank
             else:
                 prev_token = tokens[start_i]
-            if not rule.prev_class in parser_tokens[prev_token]:
+            assert len(rule.prev_classes)<2
+            if not rule.prev_classes[0] in parser_tokens[prev_token]:
                 return False
-       # print "passed prev class"
+#        print "passed prev class"
         if rule.next_tokens:
             num_next_tokens = len(rule.next_tokens)
             start_i = token_i + level # 
             if start_i + num_next_tokens > len(tokens):
-                #print 'too long'
+#                print 'too long'
                 return False
             for i in range(num_next_tokens):
                 if not tokens[start_i+i]==rule.next_tokens[i]:
                     return False
-        #print " pased next tokns"
-        if rule.next_class:
+#        print " pased next tokns"
+        if rule.next_classes:
             start_i = token_i+level+num_next_tokens
             if start_i == len(tokens): # if one past
          #       print 'loading blank', self.blank
                 next_token = self.blank # load blank
             else:
                 next_token = tokens[start_i]
-            if not rule.next_class in parser_tokens[next_token]:
-          #      print 'could not find ', rule.next_class, 'in ',parser_tokens[next_token], ' were ',parser_tokens
+            assert len(rule.next_classes)<2 # only one next clases
+            if not rule.next_classes[0] in parser_tokens[next_token]:
+#                print 'could not find ', rule.next_classes, 'in ',parser_tokens[next_token], ' were ',parser_tokens
                 return False
     #        if start_i + num_next_tokens == len(tokens):  need to deal with this one, but can in next
       #  print "passed next_class"
@@ -212,7 +216,7 @@ class GraphParser:
                 #print "string = ", string
                 #print "matches = ",matches 
             if m==None:
-                print "error in string",string
+                print "error in string",string,len(string)
             assert m != None # for now, croak on error
             matches.append(m)
             if self.onmatch_rules:
@@ -369,8 +373,11 @@ def draw_parser_graph(g):
             labels=labels)
 
 if __name__ == '__main__':
-    import pdb
-    pdb.set_trace()
-    nagarip=GraphParser('settings/devanagari.yaml')
-    print nagarip.parse(" kyaa hu)aa hai bhaa))ii")
-    
+ #   import pdb
+ #   pdb.set_trace()
+    #nagarip=GraphParser('settings/devanagari.yaml')
+    #print nagarip.parse(" kyaa hu)aa hai bhaa))ii")
+    urdup = GraphParser('settings/urdu.yaml')
+#    pdb.set_trace()
+    x=urdup.parse('haa;n jii')
+    print x.output
