@@ -1,7 +1,7 @@
 # the prev and next classes turned into lists. Had to correct for that
 #from myparser import Parser # for now, just load yaml rules via Parser
 import networkx as nx
-from collections import namedtuple
+from collections import namedtuple,defaultdict
 import re
 import unicodedata
 import yaml
@@ -167,6 +167,10 @@ class GraphParser:
         self.token_match_re = self.generate_token_match_re()
         DG= self.make_graph()
         self.sorted_out_edges = self.get_sorted_out_edges(DG) # edges are arranged by node and then by weight
+        self.sorted_out_edges_by_next_tokens,\
+        self.sorted_out_edges_no_tokens=self.get_sorted_out_edges_by_next_tokens(DG)
+
+        
         self.DG = DG
         self.blank = blank # what token is assumed at before and after tokens, presumably ' '
     def token_to_number(self,token):
@@ -256,7 +260,7 @@ class GraphParser:
         '''
         Returns dictionary from DG containing list of out edges  sorted by weight
         '''
-        from collections import defaultdict
+
         out_edges = defaultdict(list)
 
         for e in g.edges(data=True):
@@ -267,7 +271,25 @@ class GraphParser:
             sorted_edges = sorted(edges, key =lambda x: x[2]['weight'])
             sorted_out_edges[k] = sorted_edges
         return sorted_out_edges
-        
+
+    def get_sorted_out_edges_by_next_tokens(self,DG):
+        sorted_out_edges_by_next_tokens=defaultdict(lambda:defaultdict(list)) # list of out edges based on nen
+        sorted_out_edges_no_tokens=defaultdict(list) # holds rules
+
+        for start_node,edges in self.sorted_out_edges.iteritems():
+        #    print start_node
+            import pdb
+#            pdb.set_trace()
+            for edge in edges:
+                start_n,end_nid,edge_data = edge
+                end_n = DG.node[end_nid]
+                tkn=end_n.get('token')
+                if tkn:
+                    sorted_out_edges_by_next_tokens[start_n][tkn].append(edge)
+                else:
+                    sorted_out_edges_no_tokens[start_n].append(edge)    
+        return sorted_out_edges_by_next_tokens,sorted_out_edges_no_tokens
+                    
     def match_rule(self,rule, tkns, t_i, level):
         parser_tokens = self.tokens
         r_tkns=[]
@@ -301,21 +323,34 @@ class GraphParser:
     def match_first_at(self,tokens, token_i):
         
         def descend_node(curr_node, level):
-            for edge in self.sorted_out_edges[curr_node]:#sorted(list(self.DG.edges(curr_node, data=True)), key=lambda x:x[2]['weight'] ):
-                # edge contains (origin, next, data)
+            import pdb
+ #           pdb.set_trace()
+            new_edges = []
+            if token_i + level < len(tokens):
+                curr_token = tokens[token_i+level]
+                new_edges = self.sorted_out_edges_by_next_tokens[curr_node][curr_token]
+            new_edges = new_edges + self.sorted_out_edges_no_tokens[curr_node]
+ 
+            for edge in new_edges:#in self.sorted_out_edges[curr_node]:
+#                print "trying edge ",edge
                 next_node = edge[1]
-                
                 if edge[2].get('rule'): # if the edge has a rule
                     if self.match_rule(edge[2]['rule'], tokens, token_i,level)==False:
                         continue # skip it
+                # if at end of the road
+                
                 if self.DG.node[next_node].get('rule'): # matched nodes have found and rule
+                    print 'matched'
+                    print self.DG.node[next_node].get('rule')
+                    
                     return self.DG.node[next_node].get('rule')
                 if token_i+level < len(tokens): # do not descend if at end of road
-                    if self.DG.node[next_node].get('token')==tokens[token_i+level]:
-                        d =descend_node(next_node, level+1)
-                        if d:
-                            return d
-
+#                    if self.DG.node[next_node].get('token')==tokens[token_i+level]:
+                     d =descend_node(next_node, level+1)
+                     if d:
+#                         print 'matched!',d
+                         return d
+       
         return descend_node(0,0)        
 
     def parse(self,string):
@@ -368,5 +403,5 @@ class GraphParser:
 '''
 if __name__ == '__main__':
     urdup = GraphParser('settings/devanagari.yaml')
-    x=urdup.parse('kih baskih')
+    x=urdup.parse('kabhii yih kih hai haa;n jii')
     print x.output

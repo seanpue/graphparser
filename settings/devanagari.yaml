@@ -1,7 +1,6 @@
 ---
 rules:
   '''': ''
-  "\0": ''
   "\n": "\n"
   '<izaafat>  ': ''
   ' ': ' '
@@ -17,7 +16,6 @@ rules:
   .ri: \N{DEVANAGARI VOWEL SIGN VOCALIC R}
   .s: \N{DEVANAGARI LETTER SA}
   .z: \N{DEVANAGARI LETTER ZA}
-  /: ''
   :n: \N{DEVANAGARI LETTER NA}
   :t: \N{DEVANAGARI LETTER TA}
   :z: \N{DEVANAGARI LETTER ZA}
