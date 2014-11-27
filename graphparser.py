@@ -278,7 +278,7 @@ class GraphParser:
 
         for start_node,edges in self.sorted_out_edges.iteritems():
         #    print start_node
-            import pdb
+#            import pdb
 #            pdb.set_trace()
             for edge in edges:
                 start_n,end_nid,edge_data = edge
@@ -323,7 +323,7 @@ class GraphParser:
     def match_first_at(self,tokens, token_i):
         
         def descend_node(curr_node, level):
-            import pdb
+#            import pdb
  #           pdb.set_trace()
             new_edges = []
             if token_i + level < len(tokens):
