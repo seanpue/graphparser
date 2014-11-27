@@ -158,7 +158,11 @@ class GraphParser:
         data = yaml.load(file(yaml_file))
         self.dict_rules = self.rules_from_yaml_data(data['rules'])
         self.rules = self.rules_to_tuple(self.dict_rules)
-        self.onmatch_rules = self.onmatch_rules_from_yaml_data(data['onmatch'])
+        onmatch = data.get('onmatch')
+        self.onmatch_rules = None
+        if onmatch:
+            self.onmatch_rules = self.onmatch_rules_from_yaml_data(data.get('onmatch'))
+            
         self.tokens = data['tokens']
         self.token_set = set(self.tokens)
 #        self.token_i={t:self.token_set[t] f
@@ -340,8 +344,8 @@ class GraphParser:
                 # if at end of the road
                 
                 if self.DG.node[next_node].get('rule'): # matched nodes have found and rule
-                    print 'matched'
-                    print self.DG.node[next_node].get('rule')
+#                    print 'matched'
+#                    print self.DG.node[next_node].get('rule')
                     
                     return self.DG.node[next_node].get('rule')
                 if token_i+level < len(tokens): # do not descend if at end of road
@@ -402,6 +406,12 @@ class GraphParser:
         return matches
 '''
 if __name__ == '__main__':
-    urdup = GraphParser('settings/devanagari.yaml')
+    devanagarip = GraphParser('settings/devanagari.yaml')
+    x=devanagarip.parse('kabhii yih kih hai haa;n jii')
+    print x.output
+    import pdb
+    pdb.set_trace()
+    
+    urdup=GraphParser('settings/urdu.yaml')
     x=urdup.parse('kabhii yih kih hai haa;n jii')
     print x.output
