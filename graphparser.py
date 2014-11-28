@@ -19,15 +19,9 @@ ParserRule = namedtuple('ParserRule',
 
 ParserOutput = namedtuple('ParserOutput', ['matches','output']) 
 
-
 class GraphParser:
-
-
-
-
     debug=False
-        
-    
+
     def unescape_unicode_charnames(self,s):
         """
         Takes \N{charname} in production rule and turns to Unicode string.
@@ -43,7 +37,6 @@ class GraphParser:
         """
         Compares parser rules x,y and sees which has more tokens or conditions (prev, next)
         """
-    
         diff = 10*(len(y['tokens'])-len(x['tokens']))   
         if diff != 0:
             return diff
@@ -57,11 +50,11 @@ class GraphParser:
         return y_conds - x_conds # see if one has  more <classes>
 
     def onmatch_rules_from_yaml_data(self,rules_raw):
-        ''' Some quick code to generate the onmatch rules. It only relies on classes '''
-        ''' returns a tuple ( (left_classes,right_classes) , prod)
-            rules are classes '''
+        ''' Some quick code to generate the onmatch rules. It only relies on classes.
+            returns a tuple ( (left_classes,right_classes) , prod)
+            rules are classes 
+        '''
         onmatch_rules = [] # clean list of rule
-    #    print "rules_r is"+str(rules_raw)
         debug=True
 
         match_rules = []
@@ -79,6 +72,20 @@ class GraphParser:
             onmatch_rules.append(( (cl_l, cl_r) , prod ))
         return(onmatch_rules)
     
+    def onmatch_rules_by_token(self, omr):
+        '''
+        Sorts onmatch rules by current match token of rule, reducing number of iterations
+        '''
+        t_om = defaultdict(list)
+        tokens = self.tokens
+        for t,t_classes in tokens.iteritems():
+            for o in omr:
+                match_rules,prod = o
+                curr_class=match_rules[1]
+                if curr_class[0] in t_classes:
+                    t_om[t].append(o)
+        return t_om
+        
     def rules_from_yaml_data(self,rules_raw):
         """
         Returns sorted and usable parser rules from yaml file. 
@@ -143,7 +150,6 @@ class GraphParser:
         Create regular expression from Parser.tokens sorted by length
         Adds final "." in case nothing found
         '''
-
         tokens = self.tokens.keys()
         sorted_tokens = sorted(tokens, key=len, reverse=True)
         escaped_tokens = map(re.escape, sorted_tokens)
@@ -152,33 +158,26 @@ class GraphParser:
 
 
     def __init__(self, yaml_file='', data=None, blank=' '):
-
         assert data == None # not implemented yet
-
         data = yaml.load(file(yaml_file))
         self.dict_rules = self.rules_from_yaml_data(data['rules'])
         self.rules = self.rules_to_tuple(self.dict_rules)
+        self.tokens = data['tokens']
+        assert len(set(self.tokens))==len(self.tokens) # make sure there are no repeated tokens
+        self.token_match_re = self.generate_token_match_re()
         onmatch = data.get('onmatch')
         self.onmatch_rules = None
         if onmatch:
-            self.onmatch_rules = self.onmatch_rules_from_yaml_data(data.get('onmatch'))
-            
-        self.tokens = data['tokens']
-        self.token_set = set(self.tokens)
-#        self.token_i={t:self.token_set[t] f
-        assert len(self.token_set)==len(self.tokens) # make sure there are no repeated tokens
-#        assert len self.tokens==len
-        self.token_match_re = self.generate_token_match_re()
+            onmatch_rules = self.onmatch_rules_from_yaml_data(data.get('onmatch'))
+            self.onmatch_rules_by_token = self.onmatch_rules_by_token(onmatch_rules)#None
         DG= self.make_graph()
         self.sorted_out_edges = self.get_sorted_out_edges(DG) # edges are arranged by node and then by weight
         self.sorted_out_edges_by_next_tokens,\
         self.sorted_out_edges_no_tokens=self.get_sorted_out_edges_by_next_tokens(DG)
-
-        
         self.DG = DG
         self.blank = blank # what token is assumed at before and after tokens, presumably ' '
-    def token_to_number(self,token):
-        return self.tokens.index
+#    def token_to_number(self,token):
+#        return self.tokens.index
     def rules_to_tuple(self,rules):
         '''
         Converts rule into a ParserRule named tuple, adding match_tokens, prev_ and next_ length
@@ -223,17 +222,14 @@ class GraphParser:
                     return s
             return None
 
-        def weight_of_rule(r): # and here namedtuples get clunky? 
-            weight=5 # start at five and subtract.
-            if r.prev_classes:
-                weight+=-1
-            if r.prev_tokens:
-                weight+=-1
-            if r.next_classes:
-                weight+=-1
-            if r.next_tokens:
-                weight+=-1
-            return weight # when we navigate, we will go from low to high in the edges
+        def weight_of_rule(r):
+            '''
+            returns a weight of ParserRule r based on number of features
+            '''
+            weight = 0
+            for x in ['prev_classes','prev_tokens','next_classes','next_tokens']:
+                if r._asdict().get(x): weight+=1 # treat namedtuple as dict
+            return weight
 
         token_nodes = []
         match_nodes = []
@@ -272,7 +268,7 @@ class GraphParser:
             out_edges[start].append(e)
         sorted_out_edges = defaultdict(list)
         for k,edges in out_edges.iteritems():
-            sorted_edges = sorted(edges, key =lambda x: x[2]['weight'])
+            sorted_edges = sorted(edges, key =lambda x: x[2]['weight'],reverse=True)
             sorted_out_edges[k] = sorted_edges
         return sorted_out_edges
 
@@ -368,10 +364,11 @@ class GraphParser:
                 print "error in string",string,len(string)
             assert m != None # for now, croak on error
             matches.append(m)
-            if self.onmatch_rules:
+            if self.onmatch_rules and len(self.onmatch_rules_by_token[tkns[t_i]])>0: 
                 mtkns = [self.blank]+tkns+[self.blank]
                 mt_i = t_i+1
-                for mr in self.onmatch_rules:
+                
+                for mr in self.onmatch_rules_by_token[tkns[t_i]]:
                     (classes,p)=mr
                     (l_c,r_c)=classes
                     if mt_i < len(l_c) or mt_i+len(r_c)>len(mtkns):
@@ -407,7 +404,7 @@ class GraphParser:
 '''
 if __name__ == '__main__':
     devanagarip = GraphParser('settings/devanagari.yaml')
-    x=devanagarip.parse('kabhii yih kih hai haa;n jii')
+    x=devanagarip.parse('kabhii kyaa kiyaa yih kih hai haa;n jii')
     print x.output
     import pdb
     pdb.set_trace()
