@@ -166,7 +166,7 @@ onmatch:
   -
     <m> + <h_char>: \N{DEVANAGARI SIGN VIRAMA}
   -
-    <n> + consonant: ''
+    <n> + <consonant>: ''
   - 
     <k> + <kh>: \N{DEVANAGARI SIGN VIRAMA}
   -
