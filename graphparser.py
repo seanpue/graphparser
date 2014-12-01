@@ -49,7 +49,7 @@ class GraphParser:
             if cond in y: y_conds += len(y[cond])
         return y_conds - x_conds # see if one has  more <classes>
 
-    def onmatch_rules_from_yaml_data(self,rules_raw):
+    def get_onmatch_rules_from_yaml_data(self,rules_raw):
         ''' Some quick code to generate the onmatch rules. It only relies on classes.
             returns a tuple ( (left_classes,right_classes) , prod)
             rules are classes 
@@ -72,7 +72,7 @@ class GraphParser:
             onmatch_rules.append(( (cl_l, cl_r) , prod ))
         return(onmatch_rules)
     
-    def onmatch_rules_by_token(self, omr):
+    def get_onmatch_rules_by_token(self, omr):
         '''
         Sorts onmatch rules by current match token of rule, reducing number of iterations
         '''
@@ -85,6 +85,27 @@ class GraphParser:
                 if curr_class[0] in t_classes:
                     t_om[t].append(o)
         return t_om
+    
+    def get_onmatch_rules_token_matrix(self, omr):
+        '''
+        Returns a dictionary of current match token, holding a dictionary of previous tokens that
+        contain onmatch rules
+        
+        Could switch to indexes. this is an attempted speed up by reducing number of iterations.
+        Need to check that if that is in fact the case.
+        '''
+        token_matrix = {t:[] for t in self.tokens}
+        ttm = {t:{tc:[] for tc in self.tokens} for t in self.tokens}
+        for t,t_classes in self.tokens.iteritems():
+            for o in omr:
+                match_rules,prod = o
+                curr_class=match_rules[1]
+                if curr_class[0] in t_classes:
+                    for t2,t2_classes in self.tokens.iteritems():
+                        prev_class = match_rules[0]
+                        if prev_class[0] in t2_classes:
+                            ttm[t][t2].append(omr)
+        return ttm
         
     def rules_from_yaml_data(self,rules_raw):
         """
@@ -169,8 +190,9 @@ class GraphParser:
         onmatch = data.get('onmatch')
         self.onmatch_rules = None
         if onmatch:
-            self.onmatch_rules = self.onmatch_rules_from_yaml_data(onmatch)
-            self.onmatch_rules_by_token = self.onmatch_rules_by_token(self.onmatch_rules)#None
+            self.onmatch_rules = self.get_onmatch_rules_from_yaml_data(onmatch)
+            self.onmatch_rules_by_token = self.get_onmatch_rules_by_token(self.onmatch_rules)#None
+            self.onmatch_rules_token_matrix = self.get_onmatch_rules_token_matrix(self.onmatch_rules)
         DG= self.make_graph()
         self.sorted_out_edges = self.get_sorted_out_edges(DG) # edges are arranged by node and then by weight
         self.sorted_out_edges_by_next_tokens,\
@@ -364,25 +386,31 @@ class GraphParser:
                 print "error in string",string,len(string)
             assert m != None # for now, croak on error
             matches.append(m)
-            
-            if self.onmatch_rules and len(self.onmatch_rules_by_token[tkns[t_i]])>0: 
-#                print 'testing onmatch_rules'
-                
+            if self.onmatch_rules:
                 mt_i = t_i+1
+#                import pdb
+#                pdb.set_trace()
+#                print mt_i, tkns[mt_i],'::',mt_i-1,tkns[mt_i-1]
+                omr = self.onmatch_rules_token_matrix[ mtkns[mt_i] ][ mtkns[mt_i-1] ]
+                if len(omr)>0:
+    #            if self.onmatch_rules and len(self.onmatch_rules_by_token[tkns[t_i]])>0: 
+    #                print 'testing onmatch_rules'
                 
-                for mr in self.onmatch_rules_by_token[tkns[t_i]]:
-                    (classes,p)=mr
-                    (l_c,r_c)=classes
-                    if mt_i < len(l_c) or mt_i+len(r_c)>len(mtkns):
-                        continue
-                    classes_to_test_l = [self.tokens[c] for c in mtkns[mt_i-len(l_c):mt_i]]
-                    classes_to_test_r = [self.tokens[c] for c in mtkns[mt_i:mt_i+len(r_c)]]
-                    if not all(l_c[i] in classes_to_test_l[i] for i in range(len(l_c))):
-                        continue
-                    if not all(r_c[i] in classes_to_test_r[i] for i in range(len(r_c))):
-                        continue
-                    output += p
-                    break # break out of for loop
+
+                
+                    for mr in self.onmatch_rules_by_token[tkns[t_i]]:
+                        (classes,p)=mr
+                        (l_c,r_c)=classes
+                        if mt_i < len(l_c) or mt_i+len(r_c)>len(mtkns):
+                            continue
+                        classes_to_test_l = [self.tokens[c] for c in mtkns[mt_i-len(l_c):mt_i]]
+                        classes_to_test_r = [self.tokens[c] for c in mtkns[mt_i:mt_i+len(r_c)]]
+                        if not all(l_c[i] in classes_to_test_l[i] for i in range(len(l_c))):
+                            continue
+                        if not all(r_c[i] in classes_to_test_r[i] for i in range(len(r_c))):
+                            continue
+                        output += p
+                        break # break out of for loop
             output+=m.production
             t_i += len(m.tokens)
         return ParserOutput(output=output,matches=matches)
@@ -406,7 +434,7 @@ class GraphParser:
 '''
 if __name__ == '__main__':
     devanagarip = GraphParser('settings/devanagari.yaml')
-    x=devanagarip.parse('kabhii kyaa kiyaa yih kih hai haa;n jii')
+    x=devanagarip.parse('haa;n')#abhii kyaa kiyaa yih kih hai haa;n jii')
     print x.output
     import pdb
     pdb.set_trace()
