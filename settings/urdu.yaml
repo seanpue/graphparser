@@ -20,7 +20,8 @@ rules:
   )): \N{ARABIC LETTER YEH WITH HAMZA ABOVE}
   ',': \N{ARABIC COMMA}
   '-': ' '
-  '- o -': \N{ARABIC LETTER WAW}
+  '<wb> - o - <wb>': \N{ARABIC LETTER WAW}
+  '- o -': \N{SPACE}\N{ARABIC LETTER WAW}\N{SPACE}
   "----": \N{ARABIC FULL STOP}\N{ARABIC FULL STOP}
   -e <wb>: \N{ARABIC KASRA}
   -e: izaafat

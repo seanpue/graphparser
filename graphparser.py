@@ -165,11 +165,12 @@ class GraphParser:
         self.tokens = data['tokens']
         assert len(set(self.tokens))==len(self.tokens) # make sure there are no repeated tokens
         self.token_match_re = self.generate_token_match_re()
+        
         onmatch = data.get('onmatch')
         self.onmatch_rules = None
         if onmatch:
-            onmatch_rules = self.onmatch_rules_from_yaml_data(data.get('onmatch'))
-            self.onmatch_rules_by_token = self.onmatch_rules_by_token(onmatch_rules)#None
+            self.onmatch_rules = self.onmatch_rules_from_yaml_data(onmatch)
+            self.onmatch_rules_by_token = self.onmatch_rules_by_token(self.onmatch_rules)#None
         DG= self.make_graph()
         self.sorted_out_edges = self.get_sorted_out_edges(DG) # edges are arranged by node and then by weight
         self.sorted_out_edges_by_next_tokens,\
@@ -338,12 +339,9 @@ class GraphParser:
                     if self.match_rule(edge[2]['rule'], tokens, token_i,level)==False:
                         continue # skip it
                 # if at end of the road
-                
-                if self.DG.node[next_node].get('rule'): # matched nodes have found and rule
-#                    print 'matched'
-#                    print self.DG.node[next_node].get('rule')
-                    
-                    return self.DG.node[next_node].get('rule')
+                node_rule = self.DG.node[next_node].get('rule') # matched nodes have rule signalling end?
+                if node_rule:
+                    return node_rule#self.DG.node[next_node].get('rule')
                 if token_i+level < len(tokens): # do not descend if at end of road
 #                    if self.DG.node[next_node].get('token')==tokens[token_i+level]:
                      d =descend_node(next_node, level+1)
@@ -356,6 +354,8 @@ class GraphParser:
     def parse(self,string):
         t_i = 0
         tkns = self.tokenize(string)
+        if self.onmatch_rules:
+            mtkns = [self.blank]+tkns+[self.blank]
         output = ''
         matches = []
         while t_i < len(tkns):
@@ -364,8 +364,10 @@ class GraphParser:
                 print "error in string",string,len(string)
             assert m != None # for now, croak on error
             matches.append(m)
+            
             if self.onmatch_rules and len(self.onmatch_rules_by_token[tkns[t_i]])>0: 
-                mtkns = [self.blank]+tkns+[self.blank]
+#                print 'testing onmatch_rules'
+                
                 mt_i = t_i+1
                 
                 for mr in self.onmatch_rules_by_token[tkns[t_i]]:

@@ -9,7 +9,7 @@ rules:
   ): )
   )): ''
   ',': ','
-  '-': ''
+  '-': '-'
   '- h aa <wb>': \N{HYPHEN}\N{DEVANAGARI LETTER HA}\N{DEVANAGARI VOWEL SIGN AA}
   '- h aa -e <wb>': \N{HYPHEN}\N{DEVANAGARI LETTER HA}\N{DEVANAGARI VOWEL SIGN AA}-\N{DEVANAGARI LETTER E}-
   -e <wb>: \N{HYPHEN}\N{DEVANAGARI LETTER E}\N{HYPHEN}
