@@ -129,8 +129,13 @@ class GraphParser:
         """
         rules = [] # clean list of rule
         for key in rules_raw:
+            print key
+            import pdb
+            if key =='<wb> k o ()) ii <wb>)':
+                pdb.set_trace()
+
             rule = {}           #1       #2        #3
-            _  ='(?:'   
+            _  ='(?:'
             _ +='\('
             _ +='((?:\s?<.+?>\s+)+)?'# '(?:\s?<(.+?)>\s+)?' # group 1, prev class (in brackets indicating cluster)
             _ +='(.+?)\s?' # group 2, prev tokens (to be split)
@@ -143,11 +148,10 @@ class GraphParser:
             _ += ' \('
             _ += '\s?(.+?)' # group 5, next tokens
             _ += '((?:\s?<.+?>\s+?)+)?' # group 6, next class
-            _ += '\s?\)'
+            _ += '\s?((?:<.+?>\s?)+)\)'
             _ += '|'
             _ += ' ((?:<.+?>\s?)+)?' # group 7, follo
             _ += ')?$'
-        
             m = re.match (_, key, re.S)
             assert (m is not None)
             if m.group(1): rule['prev_classes'] = re.findall('<(.+?)>',m.group(1))
@@ -160,7 +164,8 @@ class GraphParser:
             if m.group(5): rule['next_tokens'] = m.group(5).split(' ')
             if m.group(6): rule['next_classes'] = re.findall('<(.+?)>',m.group(6))
             if m.group(7): rule['next_classes'] = re.findall('<(.+?)>',m.group(7))
-            
+
+
             rule['production'] = self.unescape_unicode_charnames(rules_raw[key])
             rules.append(rule)
 
@@ -324,6 +329,9 @@ class GraphParser:
         r_tkns +=rule.tokens
         if rule.next_tokens:
             r_tkns += rule.next_tokens
+        if i_start+len(r_tkns) > len(tkns):
+        # just added this check ...
+            return False
         if not all(r_tkns[i] == tkns[i_start+i] for i in range(len(r_tkns)) ):
             return False
         if rule.prev_classes:
@@ -414,7 +422,7 @@ class GraphParser:
             output+=m.production
             t_i += len(m.tokens)
         return ParserOutput(output=output,matches=matches)
-''''
+    
     def match_all_at(self,tokens, token_i):
         matches = []
         def descend_node(curr_node, level):
@@ -431,14 +439,8 @@ class GraphParser:
                             descend_node(next_node, level+1)
         descend_node(0,0)        
         return matches
-'''
+
 if __name__ == '__main__':
-    devanagarip = GraphParser('settings/devanagari.yaml')
-    x=devanagarip.parse('haa;n')#abhii kyaa kiyaa yih kih hai haa;n jii')
-    print x.output
-    import pdb
-    pdb.set_trace()
     
-    urdup=GraphParser('settings/urdu.yaml')
-    x=urdup.parse('kabhii yih kih hai haa;n jii')
-    print x.output
+    pp = GraphParser('../settings/urdu-meter.yaml',blank=' ')
+    print pp.parse(' ko))ii ').output
