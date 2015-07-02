@@ -13,6 +13,8 @@ rules:
   (: b
   ((: c
   '<wb> p a h u ;n (ch <vowel>)': pahun # this is for Ghalib--don't know if it is always the case.
+  '<wb> d u l (h a n <wb>)': dul_han
+  '<wb> d uu l (h aa <wb>)': duul_haa
   '<wb> a l -': al
   '<wb> u l -': al
   '<wb> i l -': al #treat as same
@@ -23,8 +25,8 @@ rules:
   '-': b
   --: b
   '----': b
-  -e: z
-  -o-: o
+  '-e': z
+  '-o-': o
   .s: c
   .z: c
   ':': b
@@ -85,8 +87,8 @@ rules:
   jh: c
   k: c
   kh: c
-  <wb> k o ()) ii <wb>): ko_ii
   l: c
+  <wb> k o ()) ii <wb>): ko_ii
   m: c
   n: c
   o: v
@@ -277,3 +279,4 @@ tokens:
   - consonant
   zh:
   - consonant
+
