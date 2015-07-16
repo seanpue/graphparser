@@ -163,16 +163,23 @@ class GraphParser:
 
         return rules
 
-    def generate_token_match_re(self):
+    def get_token_match_re_string(self):
         '''
-        Create regular expression from Parser.tokens sorted by length
+        Generate regular expression string from Parser.tokens sorted by length
         Adds final "." in case nothing found
         '''
         tokens = self.tokens.keys()
         sorted_tokens = sorted(tokens, key=len, reverse=True)
         escaped_tokens = map(re.escape, sorted_tokens)
         tokens_re_string = '|'.join(escaped_tokens)+'|.' # grab unknowns
-        return re.compile(tokens_re_string, re.S)
+        return tokens_re_string
+
+    def generate_token_match_re(self):
+        '''
+        Create regular expression from Parser.tokens sorted by length
+        Adds final "." in case nothing found
+        '''
+        return re.compile(self.get_token_match_re_string(), re.S)
 
 
     def __init__(self, yaml_file='', data=None, blank=' '):
