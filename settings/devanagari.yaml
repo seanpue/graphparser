@@ -1,5 +1,6 @@
 ---
 rules:
+  '*': '*'
   '''': ''
   "\n": "\n"
   ' ': ' '
@@ -493,3 +494,5 @@ tokens:
   - consonant
   '|':
   - hindi_break
+  '*':
+  - wb
