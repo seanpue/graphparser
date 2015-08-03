@@ -221,7 +221,7 @@ onmatch:
   -
     <ch> + <ch_group>: \N{DEVANAGARI SIGN VIRAMA}
   -
-    <wb> <consonant> <short_vowel> <sibilant> + <consonant> <log_vowel>: \N{DEVANAGARI SIGN VIRAMA}
+    <wb> <consonant> <short_vowel> <sibilant> + <consonant> <long_vowel>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <wb> <consonant> <long_vowel> <consonant> + <consonant> <long_vowel>: ''
   -
