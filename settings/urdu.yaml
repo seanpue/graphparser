@@ -1,5 +1,6 @@
 ---
 rules:
+  '*': '*'
   --: \N{ARABIC FULL STOP}
   "\n": "\n"
   "(": "("
@@ -397,6 +398,8 @@ tokens:
   zh:
   - consonant
   '"':
+  - wb
+  '*':
   - wb
   '|':
   - hindi_break
