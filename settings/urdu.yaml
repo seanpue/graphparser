@@ -18,27 +18,30 @@ rules:
   (( ((: \N{ARABIC LETTER AIN}\N{ARABIC SHADDA}
   ): )
   )): \N{ARABIC LETTER YEH WITH HAMZA ABOVE}
+  a )) a: \N{ARABIC LETTER ALEF WITH HAMZA ABOVE}
   ',': \N{ARABIC COMMA}
   '-': ' '
   '<wb> - o - <wb>': \N{ARABIC LETTER WAW}
   '- o -': \N{SPACE}\N{ARABIC LETTER WAW}\N{SPACE}
   "----": \N{ARABIC FULL STOP}\N{ARABIC FULL STOP}
-  -e <wb>: \N{ARABIC KASRA}
-  -e: izaafat
-  <nc_long_vowel> -e <wb>: \N{ARABIC LETTER YEH WITH HAMZA ABOVE}\N{ARABIC LETTER YEH BARREE}
+  "- e <wb>": \N{ARABIC KASRA}
+  <aa> h - e <wb>: \N{ARABIC LETTER HEH GOAL}\N{ARABIC KASRA}
+  h - e <wb>: \N{ARABIC LETTER HEH GOAL WITH HAMZA ABOVE}
+  <nc_long_vowel> - e <wb>: \N{ARABIC LETTER YEH WITH HAMZA ABOVE}\N{ARABIC LETTER YEH BARREE}
   .r: \N{ARABIC LETTER REH}
   .s: \N{ARABIC LETTER SAD}
   .s .s: \N{ARABIC LETTER SAD}\N{ARABIC SHADDA}
   .z: \N{ARABIC LETTER DAD}
   .z .z: \N{ARABIC LETTER DAD}\N{ARABIC SHADDA}
   /: ''
-  :n: \N{ARABIC FATHATAN}
+  a :n <wb>: \N{ARABIC LETTER ALEF}\N{ARABIC FATHATAN}
   :t: \N{ARABIC LETTER TAH}
   :t :t: \N{ARABIC LETTER TAH}\N{ARABIC SHADDA}
   :z: \N{ARABIC LETTER ZAH}
   :z :z: \N{ARABIC LETTER ZAH}\N{ARABIC SHADDA}
   ;: \N{ARABIC SEMICOLON}
-  ;aa: \N{ARABIC LETTER FARSI YEH}\N{ARABIC LETTER SUPERSCRIPT ALEF}
+  ;aa <wb>: \N{ARABIC LETTER FARSI YEH}\N{ARABIC LETTER SUPERSCRIPT ALEF}
+  ;aa: \N{ARABIC LETTER SUPERSCRIPT ALEF}
   ;d: \N{ARABIC LETTER DDAL}
   ;d ;d: \N{ARABIC LETTER DDAL}\N{ARABIC SHADDA}
   ;d ;dh: \N{ARABIC LETTER DDAL}\N{ARABIC SHADDA}\N{ARABIC LETTER HEH DOACHASHMEE}
@@ -97,6 +100,7 @@ rules:
   <wb> o: \N{ARABIC LETTER ALEF}\N{ARABIC LETTER WAW}
   <wb> u: \N{ARABIC LETTER ALEF}
   <wb> ^u: \N{ARABIC LETTER ALEF}\N{ARABIC DAMMA}
+  "<consonant> u ' l - <consonant>": \N{ARABIC LETTER WAW}\N{ARABIC LETTER LAM}
   <wb> u l -: \N{ARABIC LETTER ALEF}\N{ARABIC LETTER LAM}
   <wb> uu: \N{ARABIC LETTER ALEF}\N{ARABIC LETTER WAW}
   <wb> ^uu: \N{ARABIC LETTER ALEF}\N{ARABIC DAMMA}\N{ARABIC LETTER WAW}
@@ -110,7 +114,7 @@ rules:
   ai <wb>: \N{ARABIC LETTER YEH BARREE}
   ^ai <wb>: \N{ARABIC KASRA}\N{ARABIC LETTER YEH BARREE}
   au: \N{ARABIC LETTER WAW}
-  ^au: \N{ARABIC FATHA}\N{ARABIC LETTER WAW} 
+  ^au: \N{ARABIC FATHA}\N{ARABIC LETTER WAW}
   b: \N{ARABIC LETTER BEH}
   b b: \N{ARABIC LETTER BEH}\N{ARABIC SHADDA}
   b bh: \N{ARABIC LETTER BEH}\N{ARABIC SHADDA}\N{ARABIC LETTER HEH DOACHASHMEE}
@@ -224,9 +228,6 @@ tokens:
   - wb
   '----':
   - wb
-  -e:
-  - izaafat
-  - wb
   .r:
   - consonant
   .s:
@@ -299,6 +300,7 @@ tokens:
   - nc_long_vowel
   - alef
   - vowel
+  - aa
   ai:
   - vowel
   ^ai:
@@ -380,6 +382,7 @@ tokens:
   uu:
   - vowel
   - nc_long_vowel
+  - uu
   ^uu:
   - vowel
   - nc_long_vowel

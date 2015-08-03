@@ -18,7 +18,6 @@ rules:
   '-': '-'
   --: --
   '----': '----'
-  -e: -e
   .s: \N{LATIN SMALL LETTER S WITH DOT BELOW}
   .z: \N{LATIN SMALL LETTER Z WITH DOT BELOW}
   /: /
@@ -42,7 +41,6 @@ rules:
   ;th: \N{LATIN SMALL LETTER T WITH DOT BELOW}h
   ;x: \N{LATIN SMALL LETTER K WITH DOT BELOW}h
   ;z: \N{LATIN SMALL LETTER Z WITH DOT ABOVE}
-  <-e>: (-e)
   '?': '?'
   '[': '['
   ']': ']'
@@ -155,8 +153,6 @@ tokens:
   ((:
   - ain
   - consonant
-  (-e):
-  - hidden_izaafat
   ):
   - punctuation
   - wb
@@ -173,8 +169,6 @@ tokens:
   '----':
   - punctuation
   - wb
-  -e:
-  - izaafat
   .r:
   - consonant
   .s:

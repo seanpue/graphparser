@@ -2,7 +2,6 @@
 rules:
   '''': ''
   "\n": "\n"
-  '<izaafat>  ': ''
   ' ': ' '
   (: (
   ((: ''
@@ -12,7 +11,7 @@ rules:
   '-': '-'
   '- h aa <wb>': \N{HYPHEN}\N{DEVANAGARI LETTER HA}\N{DEVANAGARI VOWEL SIGN AA}
   '- h aa -e <wb>': \N{HYPHEN}\N{DEVANAGARI LETTER HA}\N{DEVANAGARI VOWEL SIGN AA}-\N{DEVANAGARI LETTER E}-
-  -e <wb>: \N{HYPHEN}\N{DEVANAGARI LETTER E}\N{HYPHEN}
+  -e <wb>: \N{HYPHEN}\N{DEVANAGARI LETTER E}
   .ri: \N{DEVANAGARI VOWEL SIGN VOCALIC R}
   .s: \N{DEVANAGARI LETTER SA}
   .z: \N{DEVANAGARI LETTER ZA}
@@ -75,7 +74,7 @@ rules:
   <vowel> (( i: \N{DEVANAGARI LETTER I}
   <consonant> (( a <wb>: \N{DEVANAGARI VOWEL SIGN AA}
   <consonant> (( <wb>: ''
-  <consonant> (( <<izaafat>: ''
+  <consonant> (( <izaafat>: ''
   <wb> .ri: \N{DEVANAGARI LETTER VOCALIC R}
   <wb> ;e: \N{DEVANAGARI LETTER E}
   <wb> ;x v u: \N{DEVANAGARI LETTER KHHA}\N{DEVANAGARI VOWEL SIGN U}
@@ -167,7 +166,7 @@ onmatch:
     <m> + <h_char>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <n> + <consonant>: ''
-  - 
+  -
     <k> + <kh>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <r> + <r>: \N{DEVANAGARI SIGN VIRAMA}
@@ -178,12 +177,16 @@ onmatch:
   -
     <v> + <v>: \N{DEVANAGARI SIGN VIRAMA}
   -
+    <s_consonant> + <v>: \N{DEVANAGARI SIGN VIRAMA}
+  -
     <;t> + <;th>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <d> + <d> : \N{DEVANAGARI SIGN VIRAMA}
   -
     <consonant> <vowel> <s> + <t> <long_vowel>: \N{DEVANAGARI SIGN VIRAMA}
-  - 
+  -
+    <short_vowel> <;x> + <t> <wb>: \N{DEVANAGARI SIGN VIRAMA}
+  -
     <consonant> <long_vowel> <consonant> + <consonant> <long_vowel>: ''
   -
     <consonant> <vowel> <vowel_nasal> <consonant> + <consonant> <long_vowel>: ''
@@ -205,11 +208,7 @@ onmatch:
   -
     <wb> <consonant> <short_vowel> <consonant> + <consonant> <short_vowel> <consonant>: ''
   -
-    <n> + <consonant>: ''
-  -
     <wb> <long_vowel> <consonant> + <consonant> <long_vowel>: ''
-  - 
-    <consonant> + <consonant>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <k> + <k_group>: \N{DEVANAGARI SIGN VIRAMA}
   -
@@ -241,7 +240,7 @@ onmatch:
   -
     <consonant> + <t> <ii> <wb>: ''
   -
-    <consonant> + <ain> <short_vowel> <wb>: ''
+    <consonant> + <ain> <short_vowel_a> <wb>: ''
   -
     <short_vowel> <ain> + <consonant>: ''
   -
@@ -292,6 +291,7 @@ tokens:
   - consonant
   .s:
   - consonant
+  - s_consonant
   .z:
   - consonant
   - z_consonant
@@ -338,6 +338,7 @@ tokens:
   - consonant
   ;s:
   - consonant
+  - s_consonant
   ;t:
   - consonant
   - ;t
@@ -345,6 +346,7 @@ tokens:
   - consonant
   - ;th
   ;x:
+  - ;x
   - ;x_class
   - consonant
   ;z:
@@ -429,6 +431,7 @@ tokens:
   - kh
   l:
   - consonant
+  - l
   m:
   - consonant
   - m
@@ -447,9 +450,12 @@ tokens:
   r:
   - consonant
   - r
+  .ri:
+  - vowel
   s:
   - consonant
   - sibilant
+  - s_consonant
   - s
   sh:
   - consonant
