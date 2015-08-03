@@ -171,6 +171,8 @@ onmatch:
   -
     <r> + <r>: \N{DEVANAGARI SIGN VIRAMA}
   -
+    <r> + <d>: \N{DEVANAGARI SIGN VIRAMA}
+  -
     <r> + <z>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <l> + <h>: \N{DEVANAGARI SIGN VIRAMA}
