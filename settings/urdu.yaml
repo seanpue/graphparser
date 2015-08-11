@@ -68,7 +68,7 @@ rules:
   ;x: \N{ARABIC LETTER KHAH}
   ;x ;x: \N{ARABIC LETTER KHAH}\N{ARABIC SHADDA}
   ;z: \N{ARABIC LETTER THAL}
-  ;z ;z: \N{ARABIC LETTER KHAH}\N{ARABIC SHADDA}
+  ;z ;z: \N{ARABIC LETTER THAL}\N{ARABIC SHADDA}
   <short_vowel_a> h <wb>: \N{ARABIC LETTER HEH GOAL}
   <vowel> )) e g aa <wb>: \N{ARABIC LETTER YEH BARREE}\N{ARABIC HAMZA ABOVE}\N{ARABIC
     LETTER GAF}\N{ARABIC LETTER ALEF}
@@ -182,6 +182,7 @@ rules:
   t th: \N{ARABIC LETTER TEH}\N{ARABIC SHADDA}\N{ARABIC LETTER HEH DOACHASHMEE}
   th: \N{ARABIC LETTER TEH}\N{ARABIC LETTER HEH DOACHASHMEE}
   u: ''
+  ;o: ''
   ^u: \N{ARABIC DAMMA}
   uu: \N{ARABIC LETTER WAW}
   ^uu: \N{ARABIC DAMMA}\N{ARABIC LETTER WAW}
@@ -193,7 +194,7 @@ rules:
   z: \N{ARABIC LETTER ZAIN}
   z z: \N{ARABIC LETTER ZAIN}\N{ARABIC SHADDA}
   zh: \N{ARABIC LETTER JEH}
-  '|': ''
+  '|': '|'
   . <wb>: .
   '[': '['
   ']': ']'
@@ -360,6 +361,8 @@ tokens:
   o:
   - vowel
   - nc_long_vowel
+  ';o':
+  - short_vowel
   p:
   - consonant
   ph:
@@ -402,7 +405,7 @@ tokens:
   '*':
   - wb
   '|':
-  - hindi_break
+  - wb
   "\t":
   - wb
   '!':
