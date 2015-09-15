@@ -184,7 +184,7 @@ onmatch:
   -
     <z_consonant> + <z_consonant>: \N{DEVANAGARI SIGN VIRAMA}
   -
-    <f> + <z>: \N{DEVANAGARI SIGN VIRAMA}
+    <f> + <z_consonant>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <j> + <letter_break> <h>: \N{DEVANAGARI SIGN VIRAMA}
   -
@@ -531,7 +531,6 @@ tokens:
   z:
   - sibilant
   - consonant
-  - z
   - z_consonant
   zh:
   - consonant
