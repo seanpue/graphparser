@@ -444,6 +444,7 @@ tokens:
   - vowel
   f:
   - consonant
+  - f
   g:
   - consonant
   gh:
@@ -463,6 +464,7 @@ tokens:
   - ii
   j:
   - consonant
+  - j
   jh:
   - consonant
   k:
