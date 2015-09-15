@@ -184,6 +184,10 @@ onmatch:
   -
     <z_consonant> + <z_consonant>: \N{DEVANAGARI SIGN VIRAMA}
   -
+    <f> + <z>: \N{DEVANAGARI SIGN VIRAMA}
+  -
+    <j> + <letter_break> <h>: \N{DEVANAGARI SIGN VIRAMA}
+  -
     <m> + <h_char>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <n> + <consonant>: ''
@@ -235,7 +239,6 @@ onmatch:
     <wb> <consonant> <short_vowel> <consonant> + <consonant> <long_vowel> <vowel_nasal>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <wb> <short_vowel> <consonant> + <consonant> <short_vowel>: ''
-
   -
     <wb> <short_vowel> <consonant> + <consonant> <long_vowel> <consonant>: ''
   -
