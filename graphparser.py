@@ -413,17 +413,13 @@ class GraphParser:
                 omr = self.onmatch_rules_token_matrix[ mtkns[mt_i] ][ mtkns[mt_i-1] ]
                 
                 if len(omr)>0:
-                    pdb.set_trace()
                     for mr in omr:
-                        print '\ntesting ',mr,'at',mt_i
                         ((l_classes,r_classes),p)=mr
                         
                         if mt_i < len(l_classes):
-                            print '... aborting due to length of l'
                             continue
+                        
                         if mt_i+len(r_classes)>len(mtkns):
-
-                            print '... aborting due to length of r'
                             continue
 
                         l_length = len(l_classes)
@@ -437,7 +433,6 @@ class GraphParser:
 
                         if not all (r_classes[i] in self.get_token_classes(mtkns[r_start+i]) for i in range(0,len(r_classes))):
                             continue
-
 
                         print 'found omr',mr
                         output += p
