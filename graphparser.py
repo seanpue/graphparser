@@ -203,7 +203,7 @@ class GraphParser:
 
         # check to make sure all tokens in rules exist
         for r in self.rules:
-            for tkns in set(x for x in r.prev_tokens, r.tokens, r.next_tokens if x!=None):
+            for tkns in [x for x in r.prev_tokens, r.tokens, r.next_tokens if x!=None]:
                 for t in tkns:
                     if not t in self.tokens:
                         print 'Error! Token',t,'not found in rule',r,'in ',yaml_file
@@ -393,44 +393,7 @@ class GraphParser:
                          return d
 
         return descend_node(0,0)
-'''
-    def parse(self,string):
-        t_i = 0
-        tkns = self.tokenize(string)
-        if self.onmatch_rules:
-            mtkns = [self.blank]+tkns+[self.blank]
-        output = ''
-        matches = []
-        while t_i < len(tkns):
-            m = self.match_first_at(tkns, t_i)
-            if m==None:
-                print "error in string",string,len(string)
-            assert m != None # for now, croak on error
-            matches.append(m)
 
-            if self.onmatch_rules:
-                mt_i = t_i+1
-                omr = self.onmatch_rules_token_matrix[ mtkns[mt_i] ][ mtkns[mt_i-1] ]
-                if len(omr)>0:
-
-#ERROR HERE? just tried to fix
-                    for mr in omr: #self.onmatch_rules_by_token[tkns[t_i]]:
-                        (classes,p)=mr
-                        (l_c,r_c)=classes
-                        if mt_i < len(l_c) or mt_i+len(r_c)>len(mtkns):
-                            continue
-                        classes_to_test_l = [self.tokens[c] for c in mtkns[mt_i-len(l_c):mt_i]]
-                        classes_to_test_r = [self.tokens[c] for c in mtkns[mt_i:mt_i+len(r_c)]]
-                        if not all(l_c[i] in classes_to_test_l[i] for i in range(len(l_c)+1)): # add one
-                            continue
-                        if not all(r_c[i] in classes_to_test_r[i] for i in range(len(r_c))):
-                            continue
-                        output += p
-                        break # break out of for loop
-            output+=m.production
-            t_i += m.tokens_length #len(m.tokens)
-        return ParserOutput(output=output,matches=matches)
-'''
     def parse(self,string):
         t_i = 0
         tkns = self.tokenize(string)
