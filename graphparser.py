@@ -427,9 +427,9 @@ class GraphParser:
                                 continue
 
                         r_length = len(r_classes)
-                        r_start = mt_i + 1
+                        r_start = mt_i
 
-                        for i in range(0,len(r_classes)):
+                        for i in range(1,len(r_classes)):
                             if not r_classes[i] in self.get_token_classes(mtkns[r_start+i]):
                                 continue
 
