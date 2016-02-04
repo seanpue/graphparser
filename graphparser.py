@@ -407,7 +407,6 @@ class GraphParser:
                 print "error in string",string,len(string)
             assert m != None # for now, croak on error
             matches.append(m)
-            print 'matched',m
             if self.onmatch_rules:
                 mt_i = t_i+1
                 omr = self.onmatch_rules_token_matrix[ mtkns[mt_i] ][ mtkns[mt_i-1] ]
