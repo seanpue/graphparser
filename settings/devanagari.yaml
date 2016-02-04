@@ -243,11 +243,7 @@ onmatch:
     <wb> <consonant> <short_vowel> <consonant> + <consonant> <long_vowel> <vowel_nasal>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <wb> <short_vowel> <consonant> + <consonant> <short_vowel>: ''
-<<<<<<< HEAD
   - 
-=======
-  -
->>>>>>> d84019e78c4e250f32664420427b812e365ee1f1
     <wb> <short_vowel> <consonant> + <consonant> <long_vowel> <consonant>: ''
   -
     <wb> <consonant> <short_vowel> <sibilant> + <consonant> <long_vowel>: \N{DEVANAGARI SIGN VIRAMA}
