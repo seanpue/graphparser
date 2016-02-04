@@ -35,7 +35,7 @@ rules:
   ;th: \N{DEVANAGARI LETTER TTHA}
   ;x: \N{DEVANAGARI LETTER KHHA}
   ;z: \N{DEVANAGARI LETTER ZA}
-  (u) n (y aa <wb>):  \N{DEVANAGARI LETTER NA}\N{DEVANAGARI VOWEL SIGN I} 
+  (u) n (y aa <wb>):  \N{DEVANAGARI LETTER NA}\N{DEVANAGARI VOWEL SIGN I}
   <wb> <consonant> <short_vowel> <consonant> a h <wb>: \N{DEVANAGARI LETTER HA}
   <consonant> a (( aa: \N{DEVANAGARI LETTER AA}
   <consonant> a (( <vowel>: ''
@@ -76,7 +76,7 @@ rules:
   <vowel> (( i: \N{DEVANAGARI LETTER I}
   <consonant> (( a <wb>: \N{DEVANAGARI VOWEL SIGN AA}
   <consonant> (( <wb>: ''
-  <consonant> (( <izaafat>: ''
+  <consonant> (( (- e <wb>): ''
   <wb> .ri: \N{DEVANAGARI LETTER VOCALIC R}
   <wb> ;e: \N{DEVANAGARI LETTER E}
   <wb> ;x v u: \N{DEVANAGARI LETTER KHHA}\N{DEVANAGARI VOWEL SIGN U}
@@ -103,9 +103,9 @@ rules:
   '?': '?'
   a: ''
   <wb> <consonant> a h <wb>: \N{DEVANAGARI LETTER HA}
-  <wb> <consonant> a h <izaafat>: \N{DEVANAGARI LETTER HA}
+  <wb> <consonant> a h (- e <wb>): \N{DEVANAGARI LETTER HA}
   <consonant> a h <wb>: \N{DEVANAGARI VOWEL SIGN AA}
-  <consonant> a h <izaafat>: \N{DEVANAGARI VOWEL SIGN AA}
+  <consonant> a h (- e <wb>): \N{DEVANAGARI VOWEL SIGN AA}
   aa: \N{DEVANAGARI VOWEL SIGN AA}
   <candrabindu_vowel> ;n <wb>: \N{DEVANAGARI SIGN CANDRABINDU}
   <r> <consonant> <candrabindu_vowel> ;n <wb>: \N{DEVANAGARI SIGN ANUSVARA}
@@ -162,7 +162,7 @@ rules:
   '|': ''
   '_': ''
   '--': '—'
-  '----': '—' 
+  '----': '—'
   '!': '!'
   '0': '०'
   '1': '१'
@@ -184,11 +184,17 @@ onmatch:
   -
     <z_consonant> + <z_consonant>: \N{DEVANAGARI SIGN VIRAMA}
   -
+    <f> + <z_consonant>: \N{DEVANAGARI SIGN VIRAMA}
+  -
+    <j> + <letter_break> <h>: \N{DEVANAGARI SIGN VIRAMA}
+  -
     <m> + <h_char>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <n> + <consonant>: ''
-  - 
-    <p> + <n> <aa_e_ii>: '' 
+  -
+    <p> + <n> <aa_e_ii>: ''
+  -
+    <q> + <sh>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <p> + <k>: ''
   -
@@ -198,11 +204,13 @@ onmatch:
   -
     <k> + <kh>: \N{DEVANAGARI SIGN VIRAMA}
   -
+    <l> + <l>: \N{DEVANAGARI SIGN VIRAMA}
+  -
     <r> + <r>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <r> + <d>: \N{DEVANAGARI SIGN VIRAMA}
   -
-    <r> + <z>: \N{DEVANAGARI SIGN VIRAMA}
+    <r> + <z_consonant>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <;x> + <m>: \N{DEVANAGARI SIGN VIRAMA}
   -
@@ -211,6 +219,10 @@ onmatch:
     <l> + <h>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <v> + <v>: \N{DEVANAGARI SIGN VIRAMA}
+  -
+    <s> + <m>: \N{DEVANAGARI SIGN VIRAMA}
+  -
+    <r> + <m>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <s_consonant> + <v>: \N{DEVANAGARI SIGN VIRAMA}
   -
@@ -231,7 +243,11 @@ onmatch:
     <wb> <consonant> <short_vowel> <consonant> + <consonant> <long_vowel> <vowel_nasal>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <wb> <short_vowel> <consonant> + <consonant> <short_vowel>: ''
+<<<<<<< HEAD
   - 
+=======
+  -
+>>>>>>> d84019e78c4e250f32664420427b812e365ee1f1
     <wb> <short_vowel> <consonant> + <consonant> <long_vowel> <consonant>: ''
   -
     <wb> <consonant> <short_vowel> <sibilant> + <consonant> <long_vowel>: \N{DEVANAGARI SIGN VIRAMA}
@@ -240,7 +256,7 @@ onmatch:
   -
     <wb> <vowel> <consonant> + <consonant> <vowel>: ''
   -
-    <wb> <consonant> <short_vowel> <z> + <z> <short_vowel> <consonant>: ''
+    <wb> <consonant> <short_vowel> <z_consonant> + <z_consonant> <short_vowel> <consonant>: ''
   -
     <wb> <consonant> <short_vowel> <consonant> + <consonant> <short_vowel> <consonant>: ''
   -
@@ -301,7 +317,6 @@ tokens:
   ((:
   - ain
   - consonant
-  - hidden_izaafat
   ):
   - punctuation
   - wb
@@ -437,6 +452,7 @@ tokens:
   - vowel
   f:
   - consonant
+  - f
   g:
   - consonant
   gh:
@@ -456,6 +472,7 @@ tokens:
   - ii
   j:
   - consonant
+  - j
   jh:
   - consonant
   k:
@@ -484,6 +501,7 @@ tokens:
   ph:
   - consonant
   q:
+  - q
   - consonant
   r:
   - consonant
@@ -496,6 +514,7 @@ tokens:
   - s_consonant
   - s
   sh:
+  - sh
   - consonant
   - sibilant
   t:
@@ -520,7 +539,6 @@ tokens:
   z:
   - sibilant
   - consonant
-  - z
   - z_consonant
   zh:
   - consonant
