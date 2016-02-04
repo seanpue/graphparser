@@ -434,7 +434,6 @@ class GraphParser:
                         if not all (r_classes[i] in self.get_token_classes(mtkns[r_start+i]) for i in range(0,len(r_classes))):
                             continue
 
-                        print 'found omr',mr
                         output += p
                         break # break out of for loop
 
