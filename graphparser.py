@@ -1,3 +1,8 @@
+
+import logging
+
+logger = logging.getLogger(__name__)
+
 import networkx as nx
 from collections import namedtuple,defaultdict
 import re
@@ -28,7 +33,7 @@ class GraphParser:
 
     def unescape_unicode_charnames(self,s):
         """
-        Takes \N{charname} in production rule and turns to Unicode string.
+        Allows unicodescape \\N in production rule and turns to Unicode string.
         """
         def get_unicode_char(matchobj):
             s = matchobj.group(0)
@@ -63,13 +68,15 @@ class GraphParser:
         match_rules = []
         for key in rules_raw:
             if len(key)!=1:
-                print 'Could not find key',key
-                assert len(key)==1
-            rule = key.keys()[0]
+                logging.error('Could not find key: %s',key)
+                raise IndexError
+            rule = list(key.keys())[0]
             prod_orig = key[rule]
             prod = self.unescape_unicode_charnames(prod_orig)
             m= re.match('([^+]+)\+([^+]+)$',rule)
-            assert m
+            if not m:
+                logging.error('Could not parser rule',rule)
+                raise ValueError
             l = m.group(1) #left
             r =m.group(2)  #right
             cl_l=re.findall('(?<=<)[^<]+(?=>)',l)
@@ -83,7 +90,7 @@ class GraphParser:
         '''
         t_om = defaultdict(list)
         tokens = self.tokens
-        for t,t_classes in tokens.iteritems():
+        for t,t_classes in tokens.items():
             for o in omr:
                 match_rules,prod = o
                 curr_class=match_rules[1]
@@ -101,12 +108,12 @@ class GraphParser:
         '''
         token_matrix = {t:[] for t in self.tokens}
         ttm = {t:{tc:[] for tc in self.tokens} for t in self.tokens}
-        for t,t_classes in self.tokens.iteritems():
+        for t,t_classes in self.tokens.items():
             for o in omr:
                 match_rules,prod = o
                 curr_class=match_rules[1]
                 if curr_class[0] in t_classes:
-                    for t2,t2_classes in self.tokens.iteritems():
+                    for t2,t2_classes in self.tokens.items():
                         prev_class = match_rules[0]
                         if prev_class[0] in t2_classes:
                             ttm[t][t2].append(o) # was omr - error??
@@ -121,7 +128,7 @@ class GraphParser:
             value: production
 
         previous class and next class of token are optional.
-        The production allows \N{unicode char name} strings.
+        The production allows \\N{unicode char name} strings.
 
         Output of return is list of rules containing:
             prev_class: previous token class [optional, will look behind prev]
@@ -149,7 +156,9 @@ class GraphParser:
             match_rule += '$)'
 
             m = re.match (match_rule, key, re.S)
-            assert (m is not None)
+            if not m:
+                logging.error('could not match ',match_rule,key,re.s)
+                raise ValueError
             if m.group(1): rule['prev_classes'] = re.findall('<(.+?)>',m.group(1))
             if m.group(2): rule['prev_tokens'] = m.group(2).split(' ')
             if m.group(3): rule['prev_classes'] =  re.findall('<(.+?)>',m.group(3))
@@ -189,25 +198,33 @@ class GraphParser:
     def __init__(self, yaml_file='', data=None, blank=' '):
         assert data == None # not implemented yet
 
-        data = yaml.load(file(yaml_file))
+        data = yaml.load(open(yaml_file,'r'))
+
+        logger.debug('loaded %s into graphparser',yaml_file)
 
         self.dict_rules = self.rules_from_yaml_data(data['rules'])
         self.rules = self.rules_to_tuple(self.dict_rules)
 
         self.tokens = data['tokens']
 
-        assert len(set(self.tokens))==len(self.tokens) # make sure there are no repeated tokens
-
+        if len(set(self.tokens))!=len(self.tokens):
+            logger.error('There are repeated tokens')
+            raise ValueError
         self.token_class_names = sorted(set(itertools.chain(*self.tokens.values())))
         self.token_keys = sorted(self.tokens)
 
         # check to make sure all tokens in rules exist
         for r in self.rules:
-            for tkns in [x for x in r.prev_tokens, r.tokens, r.next_tokens if x!=None]:
-                for t in tkns:
-                    if not t in self.tokens:
-                        print 'Error! Token',t,'not found in rule',r,'in ',yaml_file
-                    assert t in self.tokens
+            tokens = set()
+            for x in r.prev_tokens,r.tokens,r.next_tokens:
+                if x:
+                    for y in x:
+                        tokens.add(y)
+            
+            for t in tokens:
+                if not t in self.tokens:
+                    logging.error('Could not find token %s in rule %s of file %s',t,r,yaml_file)
+                    raise IndexError
 
         self.token_match_re = self.generate_token_match_re()
 
@@ -319,7 +336,7 @@ class GraphParser:
             start,end,data = e
             out_edges[start].append(e)
         sorted_out_edges = defaultdict(list)
-        for k,edges in out_edges.iteritems():
+        for k,edges in out_edges.items():
             sorted_edges = sorted(edges, key =lambda x: x[2]['weight'],reverse=True)
             sorted_out_edges[k] = sorted_edges
         return sorted_out_edges
@@ -328,7 +345,7 @@ class GraphParser:
         sorted_out_edges_by_next_tokens=defaultdict(lambda:defaultdict(list)) # list of out edges based on nen
         sorted_out_edges_no_tokens=defaultdict(list) # holds rules
 
-        for start_node,edges in self.sorted_out_edges.iteritems():
+        for start_node,edges in self.sorted_out_edges.items():
             for edge in edges:
                 start_n,end_nid,edge_data = edge
                 end_n = DG.node[end_nid]
@@ -404,8 +421,9 @@ class GraphParser:
         while t_i < len(tkns):
             m = self.match_first_at(tkns, t_i)
             if m==None:
-                print "error in string",string,len(string)
-            assert m != None # for now, croak on error
+                logging.error('error in string %s of length %s',string,len(string))
+                raise ValueError  # for now, croak on error
+
             matches.append(m)
             if self.onmatch_rules:
                 mt_i = t_i+1
@@ -462,6 +480,4 @@ class GraphParser:
 
 if __name__ == '__main__':
    p = GraphParser('settings/devanagari.yaml')
-   import pdb
-   pdb.set_trace()
-   print p.parse('te ho').output
+   print(p.parse('te ho').output)
