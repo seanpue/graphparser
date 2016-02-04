@@ -407,32 +407,39 @@ class GraphParser:
                 print "error in string",string,len(string)
             assert m != None # for now, croak on error
             matches.append(m)
-
+            print 'matched',m
             if self.onmatch_rules:
                 mt_i = t_i+1
                 omr = self.onmatch_rules_token_matrix[ mtkns[mt_i] ][ mtkns[mt_i-1] ]
+                
                 if len(omr)>0:
+                    pdb.set_trace()
                     for mr in omr:
-
+                        print '\ntesting ',mr,'at',mt_i
                         ((l_classes,r_classes),p)=mr
+                        
+                        if mt_i < len(l_classes):
+                            print '... aborting due to length of l'
+                            continue
+                        if mt_i+len(r_classes)>len(mtkns):
 
-                        if mt_i < len(l_classes) or mt_i+len(r_classes)>len(mtkns):
+                            print '... aborting due to length of r'
                             continue
 
                         l_length = len(l_classes)
                         l_start = mt_i - l_length
 
-                        for i in range(0,len(l_classes)):
-                            if not l_classes[i] in self.get_token_classes(mtkns[l_start+i]):
-                                continue
+                        if not all(l_classes[i] in self.get_token_classes(mtkns[l_start+i]) for i in range(0,len(l_classes))):
+                            continue
 
                         r_length = len(r_classes)
                         r_start = mt_i
 
-                        for i in range(1,len(r_classes)):
-                            if not r_classes[i] in self.get_token_classes(mtkns[r_start+i]):
-                                continue
+                        if not all (r_classes[i] in self.get_token_classes(mtkns[r_start+i]) for i in range(0,len(r_classes))):
+                            continue
 
+
+                        print 'found omr',mr
                         output += p
                         break # break out of for loop
 
@@ -464,4 +471,4 @@ if __name__ == '__main__':
    p = GraphParser('settings/devanagari.yaml')
    import pdb
    pdb.set_trace()
-   print p.parse(' aadmii').output
+   print p.parse('te ho').output
