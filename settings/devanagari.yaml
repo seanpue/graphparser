@@ -100,6 +100,8 @@ rules:
   <wb> n a h <wb>: \N{DEVANAGARI LETTER NA}
   <wb> p a h <wb>: \N{DEVANAGARI LETTER PA}\N{DEVANAGARI VOWEL SIGN E}
   <wb> b a h <wb>: \N{DEVANAGARI LETTER BA}
+  <wb> r a h <wb>: \N{DEVANAGARI LETTER RA}\N{DEVANAGARI LETTER HA}
+  <wb> aa d m: \N{DEVANAGARI LETTER AA}\N{DEVANAGARI LETTER DA}\N{DEVANAGARI LETTER MA}
   '?': '?'
   a: ''
   <wb> <consonant> a h <wb>: \N{DEVANAGARI LETTER HA}
@@ -322,6 +324,7 @@ tokens:
   - punctuation
   - wb
   '-':
+  - hyphen
   - wb
   --:
   - punctuation
