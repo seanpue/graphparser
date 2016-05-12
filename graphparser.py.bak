@@ -33,15 +33,13 @@ class GraphParser:
 
     def unescape_unicode_charnames(self,s):
         '''
-        Takes \\N{charname} in production rule and turns to Unicode string.
+        Takes \N{charname} in production rule and turns to Unicode string.
         '''
-        
         def get_unicode_char(matchobj):
             s = matchobj.group(0)
             m = re.match(r'\\N{(.+)}',s)
             char = unicodedata.lookup(m.group(1))
             return char
-        
         return re.sub(r'\\N{.+?}',get_unicode_char,s)
 
     def compare_rules(x,y):
@@ -89,7 +87,7 @@ class GraphParser:
         '''
         t_om = defaultdict(list)
         tokens = self.tokens
-        for t,t_classes in list(tokens.items()):
+        for t,t_classes in tokens.items():
             for o in omr:
                 match_rules,prod = o
                 curr_class=match_rules[1]
@@ -107,12 +105,12 @@ class GraphParser:
         '''
         token_matrix = {t:[] for t in self.tokens}
         ttm = {t:{tc:[] for tc in self.tokens} for t in self.tokens}
-        for t,t_classes in list(self.tokens.items()):
+        for t,t_classes in self.tokens.items():
             for o in omr:
                 match_rules,prod = o
                 curr_class=match_rules[1]
                 if curr_class[0] in t_classes:
-                    for t2,t2_classes in list(self.tokens.items()):
+                    for t2,t2_classes in self.tokens.items():
                         prev_class = match_rules[0]
                         if prev_class[0] in t2_classes:
                             ttm[t][t2].append(o) # was omr - error??
@@ -127,7 +125,7 @@ class GraphParser:
             value: production
 
         previous class and next class of token are optional.
-        The production allows \\N{unicode char name} strings.
+        The production allows \N{unicode char name} strings.
 
         Output of return is list of rules containing:
             prev_class: previous token class [optional, will look behind prev]
@@ -195,8 +193,7 @@ class GraphParser:
 
     def __init__(self, yaml_file='', data=None, blank=' '):
         assert data == None # not implemented yet
-        with open(yaml_file,'r') as stream:
-            data = yaml.load(stream)
+        data = yaml.load(file(yaml_file))
 
         self.dict_rules = self.rules_from_yaml_data(data['rules'])
         self.rules = self.rules_to_tuple(self.dict_rules)
@@ -324,7 +321,7 @@ class GraphParser:
             start,end,data = e
             out_edges[start].append(e)
         sorted_out_edges = defaultdict(list)
-        for k,edges in list(out_edges.items()):
+        for k,edges in out_edges.items():
             sorted_edges = sorted(edges, key =lambda x: x[2]['weight'],reverse=True)
             sorted_out_edges[k] = sorted_edges
         return sorted_out_edges
@@ -333,7 +330,7 @@ class GraphParser:
         sorted_out_edges_by_next_tokens=defaultdict(lambda:defaultdict(list)) # list of out edges based on nen
         sorted_out_edges_no_tokens=defaultdict(list) # holds rules
 
-        for start_node,edges in list(self.sorted_out_edges.items()):
+        for start_node,edges in self.sorted_out_edges.items():
         #    print start_node
 #            import pdb
 #            pdb.set_trace()
