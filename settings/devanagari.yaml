@@ -29,7 +29,7 @@ rules:
   ;m: \N{DEVANAGARI SIGN CANDRABINDU}
   ;n: \N{DEVANAGARI SIGN ANUSVARA}
   ;r: \N{DEVANAGARI LETTER DDDHA}
-  ;rh: \N{DEVANAGARI LETTER DDA}\N{DEVANAGARI SIGN NUKTA}
+  ;rh: \N{DEVANAGARI LETTER RHA}
   ;s: \N{DEVANAGARI LETTER SA}
   ;t: \N{DEVANAGARI LETTER TTA}
   ;th: \N{DEVANAGARI LETTER TTHA}
@@ -41,6 +41,7 @@ rules:
   <consonant> a (( <vowel>: ''
   <consonant> a ((: \N{DEVANAGARI VOWEL SIGN AA}
   <wb> a ((: \N{DEVANAGARI LETTER AA}
+  <wb> a y <wb>: \N{DEVANAGARI LETTER AI}
   <wb> i (( t i: \N{DEVANAGARI LETTER E}\N{DEVANAGARI LETTER TA}
   <short_vowel> a: \N{DEVANAGARI LETTER A}
   <short_vowel> a h <wb>: \N{DEVANAGARI LETTER AA}
@@ -211,6 +212,8 @@ onmatch:
     <r> + <r>: \N{DEVANAGARI SIGN VIRAMA}
   -
     <r> + <d>: \N{DEVANAGARI SIGN VIRAMA}
+  -
+    <h> + <l>: ''
   -
     <r> + <z_consonant>: \N{DEVANAGARI SIGN VIRAMA}
   -
