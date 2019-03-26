@@ -74,7 +74,7 @@ rules:
   <consonant> uu )) o ;n <wb>: \N{DEVANAGARI VOWEL SIGN U}\N{DEVANAGARI LETTER O}\N{DEVANAGARI SIGN ANUSVARA}
   <consonant> uu )) e ;n <wb>: \N{DEVANAGARI VOWEL SIGN U}\N{DEVANAGARI LETTER E}\N{DEVANAGARI SIGN CANDRABINDU}
   <vowel> (( ii: \N{DEVANAGARI LETTER II}
-  <vowel> (( i: \N{DEVANAGARI LETTER I}
+  <vowel> (( i: \N{DEVANAGARI LETTER YA}
   <consonant> (( a <wb>: \N{DEVANAGARI VOWEL SIGN AA}
   <consonant> (( <wb>: ''
   <consonant> (( (- e <wb>): ''
